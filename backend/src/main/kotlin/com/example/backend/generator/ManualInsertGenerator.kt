@@ -7,10 +7,10 @@ import java.io.Serializable
 class ManualInsertGenerator: IdentityGenerator() {
     override fun generate(s: SharedSessionContractImplementor, obj: Any): Serializable {
         val id = s.getEntityPersister(null, obj).classMetadata.getIdentifier(obj, s) as Serializable?
-        if(id != null && Integer.valueOf(id.toString()) > 0) {
-            return id
+        return if(id != null && Integer.valueOf(id.toString()) > 0) {
+            id
         } else {
-            return super.generate(s, obj) as Serializable
+            super.generate(s, obj) as Serializable
         }
     }
 }

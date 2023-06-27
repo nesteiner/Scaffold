@@ -1,5 +1,6 @@
 package com.example.backend.service
 
+import com.example.backend.exception.BadRequestException
 import com.example.backend.model.Student
 import com.example.backend.repository.RoleRepository
 import com.example.backend.repository.StudentRepository
@@ -27,7 +28,7 @@ class StudentService : UserDetailsService, UserService<Student, RegisterStudentR
         val role = roleRepository.findByName("student")!!
         val student = Student(
             null, data.name, data.grade, data.major, data.clazz, data.institute, data.telephone,
-            data.email, data.passwordHash, data.cardId, data.sex, listOf(role)
+            data.email, data.passwordHash, data.cardId, data.sex, listOf(role), true
         )
         return studentRepository.save(student)
     }
@@ -37,7 +38,7 @@ class StudentService : UserDetailsService, UserService<Student, RegisterStudentR
     }
 
     override fun updateOne(data: UpdateStudentRequest): Student {
-        val ifstudent = studentRepository.findByIdOrNull(data.id)!!
+        val ifstudent = studentRepository.findByIdOrNull(data.id) ?: throw BadRequestException("no such user")
         val student = Student(
             data.id,
             data.name,
@@ -50,7 +51,8 @@ class StudentService : UserDetailsService, UserService<Student, RegisterStudentR
             data.passwordHash,
             data.cardId,
             data.sex,
-            ifstudent.roles
+            ifstudent.roles,
+            ifstudent.enabled
         )
 
         return studentRepository.save(student)

@@ -3,6 +3,7 @@ package com.example.backend.service
 import com.example.backend.model.Role
 import com.example.backend.repository.RoleRepository
 import com.example.backend.request.RegisterRoleRequest
+import com.example.backend.request.UpdateRoleRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -25,8 +26,9 @@ class RoleService {
         roleRepository.deleteById(id)
     }
 
-    fun updateOne(data: Role): Role {
-        return roleRepository.save(data)
+    fun updateOne(data: UpdateRoleRequest): Role {
+        val role = Role(data.id, data.name)
+        return roleRepository.save(role)
     }
 
     fun findOne(id: Long): Role? {

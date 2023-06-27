@@ -1,8 +1,9 @@
 package com.example.backend.controller
 
-import com.example.backend.exception.NoSuchRoleException
+import com.example.backend.exception.BadRequestException
 import com.example.backend.model.Role
 import com.example.backend.request.RegisterRoleRequest
+import com.example.backend.request.UpdateRoleRequest
 import com.example.backend.service.RoleService
 import com.example.backend.utils.Response
 import com.example.backend.utils.Status
@@ -27,11 +28,11 @@ class RoleController {
     lateinit var roleService: RoleService
 
     @GetMapping("/{id}")
-    @Throws(NoSuchRoleException::class)
+    @Throws(BadRequestException::class)
     fun findOne(@PathVariable id: Long): Response<Role> {
         val role = roleService.findOne(id)
         if (role == null) {
-            throw NoSuchRoleException("no such role with id: ${id}")
+            throw BadRequestException("no such role with id: ${id}")
         } else {
             return Response.Ok("this role", role)
         }
@@ -54,7 +55,7 @@ class RoleController {
     }
 
     @PutMapping
-    fun updateOne(@RequestBody data: Role): Response<Role> {
+    fun updateOne(@RequestBody data: UpdateRoleRequest): Response<Role> {
         return Response.Ok("update ok", roleService.updateOne(data))
     }
 }

@@ -5,7 +5,6 @@ import com.example.backend.request.LoginRequest
 import com.example.backend.response.LoginResponse
 import com.example.backend.service.AdminService
 import com.example.backend.service.StudentService
-import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,12 +39,16 @@ class AuthenticationController {
     fun createToken(@RequestBody @Valid request: LoginRequest, @RequestParam("type") type: String, result: BindingResult): ResponseEntity<LoginResponse> {
         var userDetailsService: UserDetailsService? = null
 
-        if (type == "admin") {
-            userDetailsService = adminService
-        } else if(type == "student") {
-            userDetailsService = studentService
-        } else {
-            throw LoginException("no such user type", ErrorStatus.NoSuchUser)
+        userDetailsService = when (type) {
+            "admin" -> {
+                adminService
+            }
+            "student" -> {
+                studentService
+            }
+            else -> {
+                throw LoginException("no such user type")
+            }
         }
 
         val userDetails = userDetailsService.loadUserByUsername(request.username)
@@ -60,15 +63,15 @@ class AuthenticationController {
         try {
 
             if (password != userDetails.password) {
-                throw LoginException("password error", ErrorStatus.UserNamePasswordError)
+                throw LoginException("password error")
             } else {
                 val authentication: Authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                 SecurityContextHolder.getContext().authentication = authentication
             }
         } catch (exception: DisabledException) {
-            throw LoginException("user diabled", ErrorStatus.UserDisabled)
+            throw LoginException("user diabled")
         } catch (exception: BadCredentialsException) { // this is for catching UsernameNotfoundException
-            throw LoginException("in AuthenticationController: no such user or password error", ErrorStatus.UserNamePasswordError)
+            throw LoginException("in AuthenticationController: no such user or password error")
         }
     }
 }

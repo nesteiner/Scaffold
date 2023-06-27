@@ -1,6 +1,6 @@
 package com.example.backend.controller
 
-import com.example.backend.exception.NoSuchUserException
+import com.example.backend.exception.BadRequestException
 import com.example.backend.model.Student
 import com.example.backend.request.RegisterStudentRequest
 import com.example.backend.request.UpdateStudentRequest
@@ -40,11 +40,11 @@ class StudentController {
     }
 
     @GetMapping("/{id}")
-    @Throws(NoSuchUserException::class)
+    @Throws(BadRequestException::class)
     fun findOne(@PathVariable("id") id: Long): Response<Student> {
         val data = studentService.findOne(id)
         if (data == null) {
-            throw NoSuchUserException("no such student")
+            throw BadRequestException("no such student")
         } else {
             return Response.Ok("this student", data)
         }

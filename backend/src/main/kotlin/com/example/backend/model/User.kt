@@ -4,4 +4,5 @@ interface User {
     val name: String
     val passwordHash: String
     val roles: List<Role>
+    val enabled: Boolean
 }

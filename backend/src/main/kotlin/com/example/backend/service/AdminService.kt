@@ -1,5 +1,6 @@
 package com.example.backend.service
 
+import com.example.backend.exception.BadRequestException
 import com.example.backend.model.Admin
 import com.example.backend.repository.AdminRepository
 import com.example.backend.repository.RoleRepository
@@ -60,12 +61,14 @@ class AdminService: UserDetailsService, UserService<Admin, RegisterAdminRequest,
     }
 
     override fun updateOne(data: UpdateAdminRequest): Admin {
-        val role = roleRepository.findByName("admin")!!
-        return adminRepository.save(Admin(data.id, data.name, data.passwordHash, listOf(role)))
+        val role = roleRepository.findByName("admin") ?: throw BadRequestException("no such role admin")
+        val admin = adminRepository.findByIdOrNull(data.id) ?: throw BadRequestException("user not found")
+
+        return adminRepository.save(Admin(data.id, data.name, data.passwordHash, listOf(role), admin.enabled))
     }
 
     override fun insertOne(data: RegisterAdminRequest): Admin {
         val role = roleRepository.findByName("admin")!!
-        return adminRepository.save(Admin(null, data.name, data.passwordHash, listOf(role)))
+        return adminRepository.save(Admin(null, data.name, data.passwordHash, listOf(role), true))
     }
 }

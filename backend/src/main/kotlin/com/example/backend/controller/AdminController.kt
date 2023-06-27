@@ -1,6 +1,6 @@
 package com.example.backend.controller
 
-import com.example.backend.exception.NoSuchUserException
+import com.example.backend.exception.BadRequestException
 import com.example.backend.model.Admin
 import com.example.backend.model.User
 import com.example.backend.request.RegisterAdminRequest
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.lang.Exception
 
 @RestController
 @RequestMapping("/admin")
@@ -38,10 +39,16 @@ class AdminController {
     fun findAll(@RequestParam("type") type: String,
                 @RequestParam("size", defaultValue = "10") size: Int,
                 @RequestParam("page", defaultValue = "0") page: Int): Response<Page<out User>> {
-        if (type == "student") {
-            return Response.Ok("all students", studentService.findAll(PageRequest.of(page, size)))
-        } else {
-            return Response.Err("unknown type", Page.empty())
+        return when (type) {
+            "student" -> {
+                Response.Ok("all students", studentService.findAll(PageRequest.of(page, size)))
+            }
+            "admin" -> {
+                Response.Ok("all admins", adminService.findAll(PageRequest.of(page, size)))
+            }
+            else -> {
+                throw BadRequestException("no such user type")
+            }
         }
     }
 
@@ -51,8 +58,7 @@ class AdminController {
     }
 
     @DeleteMapping("/user/{id}")
-    @Throws(NoSuchUserException::class)
-    fun deleteUser(@PathVariable id: Long): Response<Status> {
+    fun deleteOne(@PathVariable id: Long): Response<Status> {
         studentService.deleteOne(id)
         return Response.Ok("delete ok", Status.Ok)
     }

@@ -48,5 +48,8 @@ class Student(
         joinColumns = [JoinColumn(name = "userid", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "roleid", referencedColumnName = "id")]
     )
-    override var roles: List<Role>
+    override var roles: List<Role>,
+
+    @Column(nullable = false)
+    override var enabled: Boolean
 ): User
