@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <div class="pagination">
     <ul class="page-inner">
       <li class="page" @click="prevOrNext(-1)">
         <span aria-hidden="true">
@@ -90,7 +90,7 @@ function prevOrNext(n: number) {
 </script>
 
 <style lang="scss" scoped>
-div.page-container {
+div.pagination {
   display: flex;
   justify-content: center;
   align-items: center;

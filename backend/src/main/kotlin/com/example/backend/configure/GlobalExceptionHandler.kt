@@ -4,6 +4,7 @@ import com.example.backend.exception.BadRequestException
 import com.example.backend.exception.LoginException
 import com.example.backend.utils.Response
 import jakarta.validation.ConstraintViolationException
+import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
@@ -14,6 +15,10 @@ import java.lang.StringBuilder
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
+    companion object {
+        val logger = LoggerFactory.getLogger("fuck")
+    }
+
     @ExceptionHandler(LoginException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleException(exception: LoginException): Response<Unit> {
@@ -60,6 +65,7 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleException(exception: Exception): Response<Unit> {
         val message = exception.message ?: "Internal exception occurs"
+        logger.error(exception.message ?: "Fuck")
         return Response.Err(message)
     }
 }

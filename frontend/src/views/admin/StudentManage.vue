@@ -1,9 +1,5 @@
 <template>
   <div class="student-manage column">
-    <div class="row">
-      <button @click="handleCreate">新建</button>
-    </div>
-
     <table>
       <tr>
         <th>id</th>
@@ -184,6 +180,8 @@
         </div>
       </div>
     </Dialog>
+
+    <FloatingActionButton :on-pressed="handleCreate"/>
   </div>
 </template>
 
@@ -192,6 +190,7 @@ import {onMounted, ref, watch} from "vue";
 import {Dialog} from "@/components/dialog/";
 import {deleteUserByAdmin, findAllUser, registerStudent, updateStudent} from "@/api";
 import {Pagination} from "@/components/pagination";
+import {FloatingActionButton} from "@/components/floating-action-button"
 
 const totalPages = ref(0)
 const currentPage = ref(1)
@@ -315,6 +314,7 @@ div.student-manage.column {
 
   table {
     width: 80%;
+    font-size: 10px;
 
     td {
       word-break: break-all;
@@ -325,6 +325,11 @@ div.student-manage.column {
         align-items: center;
       }
     }
+  }
+
+  .pagination {
+    position: fixed;
+    bottom: 50px;
   }
 
   div.form {

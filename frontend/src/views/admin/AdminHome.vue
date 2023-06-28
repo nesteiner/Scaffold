@@ -1,10 +1,8 @@
 <template>
   <div class="admin-home column">
-    <nav>
-      <div class="row">
-        <button @click="handleLogout">退出</button>
-      </div>
-    </nav>
+    <div class="navbar">
+      <a class="right" href="/" @click="handleLogout">退出</a>
+    </div>
 
     <div class="row">
       <Sidebar>
@@ -41,10 +39,19 @@ div.admin-home.column {
   display: flex;
   flex-direction: column;
 
-  nav {
-    div.row {
-      width: 100%;
-      justify-content: flex-end;
+  .navbar {
+    background: rgba(0, 0, 0, 0.1);
+
+    a {
+      float: left;
+      display: block;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+
+      &.right {
+        float: right;
+      }
     }
   }
 
