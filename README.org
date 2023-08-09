@@ -9,6 +9,7 @@
       val name: String
       val passwordHash: String
       val roles: List<Role>
+      val enabled: Boolean
   }
 #+end_src
 *** 以 Student 为例的配置

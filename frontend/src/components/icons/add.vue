@@ -23,6 +23,10 @@ const height = computed(() => `${props.height}px`)
 svg {
   width: v-bind(width);
   height: v-bind(height);
-  fill: v-bind(fill)
+  fill: v-bind(fill);
+
+  path {
+    fill: v-bind(fill);
+  }
 }
 </style>

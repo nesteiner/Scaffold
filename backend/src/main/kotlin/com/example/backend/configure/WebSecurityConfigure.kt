@@ -38,11 +38,6 @@ class WebSecurityConfigure {
             .passwordEncoder(mD5PasswordEncoder)
     }
 
-    @Bean
-    fun openConfiguration(): OpenConfiguration {
-        return OpenConfiguration()
-    }
-
     @Autowired
     lateinit var openConfig: OpenConfiguration
     @Bean

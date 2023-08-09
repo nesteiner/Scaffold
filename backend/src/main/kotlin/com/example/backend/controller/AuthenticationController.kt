@@ -1,6 +1,9 @@
 package com.example.backend.controller
 
+import com.example.backend.exception.BadRequestException
 import com.example.backend.exception.LoginException
+import com.example.backend.exception.UserNotEnabledException
+import com.example.backend.model.User
 import com.example.backend.request.LoginRequest
 import com.example.backend.response.LoginResponse
 import com.example.backend.service.AdminService
@@ -16,6 +19,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
@@ -35,7 +39,7 @@ class AuthenticationController {
     lateinit var adminService: AdminService
 
     @PostMapping("/authenticate", params = ["type"])
-    @Throws(LoginException::class)
+    @Throws(LoginException::class, UsernameNotFoundException::class, UserNotEnabledException::class)
     fun createToken(@RequestBody @Valid request: LoginRequest, @RequestParam("type") type: String, result: BindingResult): ResponseEntity<LoginResponse> {
         var userDetailsService: UserDetailsService? = null
 
@@ -61,6 +65,22 @@ class AuthenticationController {
     @Throws(LoginException::class)
     fun authenticate(username: String, password: String, userDetails: UserDetails) {
         try {
+            val services = listOf(studentService, adminService)
+            var user: User? = null
+            for (service in services) {
+                user = service.findOne(username)
+                if (user != null) {
+                    break
+                }
+            }
+
+            if (user == null) {
+                throw BadRequestException("no such user ${username}")
+            }
+
+            if (!user.enabled) {
+                throw UserNotEnabledException("user ${username} not enabled")
+            }
 
             if (password != userDetails.password) {
                 throw LoginException("password error")

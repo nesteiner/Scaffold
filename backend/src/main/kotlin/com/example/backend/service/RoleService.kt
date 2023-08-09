@@ -1,54 +1,61 @@
 package com.example.backend.service
 
+import com.example.backend.constant.DEFAULT_ROLE_NAME
 import com.example.backend.model.Role
-import com.example.backend.repository.RoleRepository
 import com.example.backend.request.RegisterRoleRequest
 import com.example.backend.request.UpdateRoleRequest
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
+import com.example.backend.table.Roles
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class RoleService {
-    companion object {
-        private const val DEFAULT_NAME = "user"
-    }
-
-    @Autowired
-    lateinit var roleRepository: RoleRepository
-
     fun insertOne(request: RegisterRoleRequest): Role {
-        val data = Role(null, request.name)
-        return roleRepository.save(data)
-    }
+        val roleid = Roles.insert {
+            it[name] = request.name
+        } get Roles.id
 
-    fun deleteOne(id: Long) {
-        roleRepository.deleteById(id)
+        return Role(roleid.value, request.name)
     }
 
     fun updateOne(data: UpdateRoleRequest): Role {
-        val role = Role(data.id, data.name)
-        return roleRepository.save(role)
+        Roles.update({ Roles.id eq data.id }) {
+            it[name] = data.name
+        }
+
+        return Role(data.id, data.name)
     }
 
     fun findOne(id: Long): Role? {
-        return roleRepository.findByIdOrNull(id)
+        return Roles.select(Roles.id eq id)
+            .firstOrNull()?.let {
+                Role(it[Roles.id].value, it[Roles.name])
+            }
+
     }
 
     fun findOne(name: String): Role? {
-        return roleRepository.findByName(name)
+        return Roles.select(Roles.name eq name)
+            .firstOrNull()?.let {
+                Role(it[Roles.id].value, it[Roles.name])
+            }
     }
 
     fun findDefault(): Role {
-        var role = findOne(DEFAULT_NAME)
+        var role = findOne(DEFAULT_ROLE_NAME)
         if (role == null) {
-            role = Role(null, DEFAULT_NAME)
-            role = roleRepository.save(role)
+            role = insertOne(RegisterRoleRequest(DEFAULT_ROLE_NAME))
         }
 
         return role
     }
     fun findAll(): List<Role> {
-        return roleRepository.findAll()
+        return Roles.selectAll()
+            .map {
+                Role(it[Roles.id].value, it[Roles.name])
+            }
     }
 }

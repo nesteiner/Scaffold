@@ -7,11 +7,11 @@ import com.example.backend.request.RegisterAdminRequest
 import com.example.backend.service.AdminService
 import com.example.backend.service.RoleService
 import com.example.backend.service.StudentService
+import com.example.backend.utils.Page
 import com.example.backend.utils.Response
 import com.example.backend.utils.Status
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -41,10 +41,10 @@ class AdminController {
                 @RequestParam("page", defaultValue = "0") page: Int): Response<Page<out User>> {
         return when (type) {
             "student" -> {
-                Response.Ok("all students", studentService.findAll(PageRequest.of(page, size)))
+                Response.Ok("all students", studentService.findAll(page, size))
             }
             "admin" -> {
-                Response.Ok("all admins", adminService.findAll(PageRequest.of(page, size)))
+                Response.Ok("all admins", adminService.findAll(page, size))
             }
             else -> {
                 throw BadRequestException("no such user type")

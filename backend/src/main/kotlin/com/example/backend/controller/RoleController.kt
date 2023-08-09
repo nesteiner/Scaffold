@@ -48,12 +48,6 @@ class RoleController {
         return Response.Ok("insert ok", roleService.insertOne(request))
     }
 
-    @DeleteMapping("/{id}")
-    fun deleteOne(@PathVariable id: Long): Response<Status> {
-        roleService.deleteOne(id)
-        return Response.Ok("delete ok", Status.Ok)
-    }
-
     @PutMapping
     fun updateOne(@RequestBody data: UpdateRoleRequest): Response<Role> {
         return Response.Ok("update ok", roleService.updateOne(data))

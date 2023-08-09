@@ -2,6 +2,7 @@ package com.example.backend.configure
 
 import com.example.backend.exception.BadRequestException
 import com.example.backend.exception.LoginException
+import com.example.backend.exception.UserNotEnabledException
 import com.example.backend.utils.Response
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
@@ -44,6 +45,13 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleException(exception: AuthenticationException): Response<Unit> {
         val message = exception.message ?: "Username not found"
+        return Response.Err(message)
+    }
+
+    @ExceptionHandler(UserNotEnabledException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleException(exception: UserNotEnabledException): Response<Unit> {
+        val message = exception.message
         return Response.Err(message)
     }
 
